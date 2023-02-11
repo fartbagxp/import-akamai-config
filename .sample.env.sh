@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+export AKAMAI_PAPI_HOST=
+export AKAMAI_PAPI_ACCESS_TOKEN=
+export AKAMAI_PAPI_CLIENT_TOKEN=
+export AKAMAI_PAPI_CLIENT_SECRET=
