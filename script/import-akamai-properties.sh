@@ -10,6 +10,10 @@ set -e
 ## properties are imported as an effort to provide infrastructure as 
 ## code (IaC) to provide a glimpse into the Akamai configuration
 ## settings between projects/programs/domains.
+##
+## NOTE: this function is best effort only, there may be failures in 
+## fetching domains or properties that do not exist, and while they 
+## will be printed out, it won't fail the run.
 ######################################################################
 create_akamai_configuration() {
   echo "Creating property configurations from the following folders: "
@@ -23,10 +27,11 @@ create_akamai_configuration() {
   for folder in ${FOLDERS[*]}; do
     name="$(basename "${folder}")"
     if [[ ${name} == *"${DOMAIN}" ]]; then
-      echo "${name}"
-      # akamai terraform export-domain --tfworkpath "${folder}" "${name}"
-      # akamai terraform export-appsec --tfworkpath "${folder}" "${name}"
-      akamai terraform export-property --tfworkpath "${folder}" "${name}"
+      echo "Folder: ${folder}"
+      echo "Domain: ${name}"
+      # akamai terraform export-domain --tfworkpath "${folder}" "${name}" || true ## best effort, could fail.
+      # akamai terraform export-appsec --tfworkpath "${folder}" "${name}" || true ## best effort, could fail.
+      akamai terraform export-property --tfworkpath "${folder}" "${name}" || true ## best effort, could fail.
     fi
   done
 }
@@ -50,6 +55,7 @@ delete_akamai_configuration() {
     PROPERTY_FILE_TO_DELETE="${folder}/property.tf"
     VARIABLE_FILE_TO_DELETE="${folder}/variables.tf"
     PROPERTY_SNIPPETS_FOLDER_TO_DELETE="${folder}/property-snippets"
+    MODULES_FOLDER_TO_DELETE="${folder}/modules"
     name="$(basename "${folder}")"
     if [[ ${name} == *"${DOMAIN}" ]]; then
       echo "${name}"
@@ -64,6 +70,9 @@ delete_akamai_configuration() {
       fi
       if test -d "${PROPERTY_SNIPPETS_FOLDER_TO_DELETE}"; then 
         rm -rf "${PROPERTY_SNIPPETS_FOLDER_TO_DELETE}" 
+      fi
+      if test -d "${MODULES_FOLDER_TO_DELETE}"; then 
+        rm -rf "${MODULES_FOLDER_TO_DELETE}" 
       fi
     fi
   done
