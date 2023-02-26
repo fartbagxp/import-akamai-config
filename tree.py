@@ -10,7 +10,7 @@
 class FolderTree:
   def __init__(self, items):
     self.id_to_name_map = dict((i['groupId'], i['groupName']) for i in items)
-    self.id_to_parent_map = dict((i['groupId'], i['parentGroupId']) for i in items)
+    self.id_to_parent_map = dict((i['groupId'], i.get('parentGroupId', None)) for i in items)
 
   def get_structure_property_groups_items(self, items):
     groups = []
